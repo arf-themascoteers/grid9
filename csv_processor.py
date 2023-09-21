@@ -51,7 +51,7 @@ class CSVProcessor:
         return ["lon", "lat", "when"]
 
     @classmethod
-    def gridify(cls, ag, grid):
+    def gridify(cls, ag, grid, scene_fusion = False):
         df = pd.read_csv(ag)
         columns = list(df.columns)
         n_cols = ["nB01", "nB02", "nB03", "nB04", "nB05", "nB06", "nB07", "nB08", "nB8A", "nB09", "nB11", "nB12"]
@@ -65,6 +65,9 @@ class CSVProcessor:
         for index, row in df.iterrows():
             the_row = row["row"]
             the_column = row["column"]
+            the_scene = None
+            if scene_fusion:
+                the_scene = row["scene"]
 
             neighbours = None
 
@@ -74,7 +77,10 @@ class CSVProcessor:
                         continue
                     target_row = the_row + ro
                     target_col = the_column + co
-                    filter = df[(df["row"] == target_row) & (df["column"] == target_col)]
+                    if scene_fusion:
+                        filter = df[(df["row"] == target_row) & (df["column"] == target_col) & (df["scene"] == the_scene)]
+                    else:
+                        filter = df[(df["row"] == target_row) & (df["column"] == target_col)]
                     if len(filter) == 0:
                         continue
 
@@ -88,7 +94,7 @@ class CSVProcessor:
 
             new_row = {}
             for column in df.columns:
-                new_row[column] = row["column"]
+                new_row[column] = row[column]
 
             for ncol in n_cols:
                 band = ncol[1:]

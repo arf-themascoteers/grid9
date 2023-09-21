@@ -17,7 +17,6 @@ class CSVIntegrator:
     def integrate(self):
         all_complete = None
         all_ag = None
-        all_grid = None
         for index, scene in enumerate(self.scene_list):
             scene_home = os.path.join(self.processed_path, scene)
             scene_csvs_home = os.path.join(scene_home, "csvs")
@@ -38,17 +37,9 @@ class CSVIntegrator:
             else:
                 all_ag = pd.concat([all_ag, ag])
 
-            scene_grid = os.path.join(scene_csvs_home, "grid.csv")
-            grid = pd.read_csv(scene_grid)
-            grid.insert(0, "scene", pd.Series([index] * len(grid)))
-            if all_grid is None:
-                all_grid = grid
-            else:
-                all_grid = pd.concat([all_grid, grid])
-
         all_complete.to_csv(self.complete, index=False)
         all_ag.to_csv(self.ag, index=False)
-        all_grid.to_csv(self.grid, index=False)
-        CSVProcessor.make_ml_ready(self.grid, self.ml)
-        return self.complete, self.ag, self.grid, self.ml
+        CSVProcessor.make_ml_ready(self.ag, self.ml)
+        CSVProcessor.gridify(self.ml, self.grid, scene_fusion=True)
+        return self.complete, self.ag, self.ml, self.grid
 

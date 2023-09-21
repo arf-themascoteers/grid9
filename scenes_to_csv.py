@@ -31,10 +31,12 @@ class SceneToCSVs:
             df.sort_values(CSVProcessor.get_spatial_columns(df), inplace=True)
             complete_path = os.path.join(csvs_root, "complete.csv")
             ag_path = os.path.join(csvs_root, "ag.csv")
+            grid_path = os.path.join(csvs_root, "grid.csv")
             ml_path = os.path.join(csvs_root, "ml.csv")
             df.to_csv(complete_path, index=False)
             CSVProcessor.aggregate(complete_path, ag_path)
-            CSVProcessor.make_ml_ready(ag_path, ml_path)
+            CSVProcessor.gridify(ag_path, grid_path)
+            CSVProcessor.make_ml_ready(grid_path, ml_path)
             print(f"Done scene {index+1}: {scene}")
 
     def create_table(self, clip_path):

@@ -49,3 +49,52 @@ class CSVProcessor:
     @staticmethod
     def get_geo_columns():
         return ["lon", "lat", "when"]
+
+    @classmethod
+    def gridify(cls, ag, grid):
+        df = pd.read_csv(ag)
+        columns = list(df.columns)
+        n_cols = ["nB01", "nB02", "nB03", "nB04", "nB05", "nB06", "nB07", "nB08", "nB8A", "nB09", "nB11", "nB12"]
+        columns = columns + n_cols
+
+        dest = pd.DataFrame(columns=columns)
+
+        row_offset = [-1,0,1]
+        col_offset = [-1,0,1]
+
+        for index, row in df.iterrows():
+            the_row = row["row"]
+            the_column = row["column"]
+
+            neighbours = None
+
+            for ro in row_offset:
+                for co in col_offset:
+                    if ro == 0 and co == 0:
+                        continue
+                    target_row = the_row + ro
+                    target_col = the_column + co
+                    filter = df[(df["row"] == target_row) & (df["column"] == target_col)]
+                    if len(filter) == 0:
+                        continue
+
+                    if neighbours is None:
+                        neighbours = filter
+                    else:
+                        neighbours = pd.concat((neighbours,filter), axis=0)
+
+            if neighbours is None:
+                continue
+
+            new_row = {}
+            for column in df.columns:
+                new_row[column] = row["column"]
+
+            for ncol in n_cols:
+                band = ncol[1:]
+                new_row[ncol] = neighbours[band].mean()
+
+            df_dictionary = pd.DataFrame([new_row])
+            dest = pd.concat([dest, df_dictionary], ignore_index=True)
+
+        dest.to_csv(grid, index=False)

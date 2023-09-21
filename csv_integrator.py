@@ -9,9 +9,10 @@ class CSVIntegrator:
         self.dir_hash_path = dir_hash_path
         self.scene_list = scene_list
 
-        self.complete_row = os.path.join(self.dir_hash_path, "complete.csv")
-        self.ag_row = os.path.join(self.dir_hash_path, "ag.csv")
-        self.ml_row = os.path.join(self.dir_hash_path, "ml.csv")
+        self.complete = os.path.join(self.dir_hash_path, "complete.csv")
+        self.ag = os.path.join(self.dir_hash_path, "ag.csv")
+        self.grid = os.path.join(self.dir_hash_path, "grid.csv")
+        self.ml = os.path.join(self.dir_hash_path, "ml.csv")
 
     def integrate(self):
         all_complete = None
@@ -36,8 +37,9 @@ class CSVIntegrator:
             else:
                 all_ag = pd.concat([all_ag, ag])
 
-        all_complete.to_csv(self.complete_row, index=False)
-        all_ag.to_csv(self.ag_row, index=False)
-        CSVProcessor.make_ml_ready(self.ag_row, self.ml_row)
-        return self.complete_row, self.ag_row, self.ml_row
+        all_complete.to_csv(self.complete, index=False)
+        all_ag.to_csv(self.ag, index=False)
+        CSVProcessor.gridify(self.ag, self.grid)
+        CSVProcessor.make_ml_ready(self.grid, self.ml)
+        return self.complete, self.ag, self.ml
 

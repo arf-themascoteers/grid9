@@ -20,12 +20,14 @@ class CSVProcessor:
         df_mean = df_group_object.agg(**agg_dict).reset_index()
         df_mean.insert(0, "cell", df_mean.index)
         df_mean = df_mean[df_mean["counter"] >= 1]
+        df_mean = df_mean.round(4)
         df_mean.to_csv(ag, index=False)
 
     @staticmethod
     def make_ml_ready(ag, ml):
         df = pd.read_csv(ag)
         df = CSVProcessor.make_ml_ready_df(df)
+        df = df.round(4)
         df.to_csv(ml, index=False)
 
     @staticmethod
@@ -103,4 +105,5 @@ class CSVProcessor:
             df_dictionary = pd.DataFrame([new_row])
             dest = pd.concat([dest, df_dictionary], ignore_index=True)
 
+        dest = dest.round(4)
         dest.to_csv(grid, index=False)

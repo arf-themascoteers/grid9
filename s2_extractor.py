@@ -84,7 +84,7 @@ class S2Extractor:
         csv = CSVIntegrator(self.processed_path, self.dir_hash_path, self.scene_list)
         complete_row, ag_row, ml_row, grid_row = csv.integrate()
         self.write_dataset_list_file(self.dir_hash, self.scenes_str)
-        return ml_row
+        return grid_row
 
 
 

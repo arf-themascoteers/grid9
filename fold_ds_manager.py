@@ -9,7 +9,7 @@ class FoldDSManager:
     def __init__(self, csv, folds=10):
         torch.manual_seed(0)
         df = pd.read_csv(csv)
-        self.x = S2Bands.get_all_bands()
+        self.x = S2Bands.get_all_bands() + ["nB01", "nB02", "nB03", "nB04", "nB05", "nB06", "nB07", "nB08", "nB8A", "nB09", "nB11", "nB12"]
         self.y = "som"
         self.folds = folds
         columns = self.x + [self.y]

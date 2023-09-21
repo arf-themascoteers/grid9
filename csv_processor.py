@@ -4,6 +4,11 @@ from sklearn.preprocessing import MinMaxScaler
 
 class CSVProcessor:
     @staticmethod
+    def get_neighbour_columns():
+        return ["nB01", "nB02", "nB03", "nB04", "nB05", "nB06", "nB07", "nB08", "nB8A", "nB09", "nB11", "nB12"]
+
+
+    @staticmethod
     def aggregate(complete, ag):
         df = pd.read_csv(complete)
         df.drop(columns=CSVProcessor.get_geo_columns(), axis=1, inplace=True)
@@ -56,8 +61,7 @@ class CSVProcessor:
     def gridify(cls, ag, grid, scene_fusion = False):
         df = pd.read_csv(ag)
         columns = list(df.columns)
-        n_cols = ["nB01", "nB02", "nB03", "nB04", "nB05", "nB06", "nB07", "nB08", "nB8A", "nB09", "nB11", "nB12"]
-        columns = columns + n_cols
+        columns = columns + CSVProcessor.get_neighbour_columns()
 
         dest = pd.DataFrame(columns=columns)
 
@@ -98,7 +102,7 @@ class CSVProcessor:
             for column in df.columns:
                 new_row[column] = row[column]
 
-            for ncol in n_cols:
+            for ncol in CSVProcessor.get_neighbour_columns():
                 band = ncol[1:]
                 new_row[ncol] = neighbours[band].mean()
 

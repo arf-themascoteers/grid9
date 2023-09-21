@@ -73,8 +73,7 @@ class S2Extractor:
     def process(self):
         if os.path.exists(self.dir_hash_path):
             print(f"Dir exists for {self.dir_str_original} - ({self.dir_hash_path}). Skipping.")
-            ml_row = os.path.join(self.dir_hash_path, "ml.csv")
-            return ml_row
+            return os.path.join(self.dir_hash_path, "grid.csv")
 
         os.mkdir(self.dir_hash_path)
         scene_processor = SceneProcessor(self.scene_list, self.processed_path, self.source_csv_path)
